@@ -6,3 +6,6 @@ Reinforcement learning with Space Invaders and Open AI Gym
 2. source venv/bin/activate
 3. pip install -r requirements.txt
 
+# Running the Project
+1. python main.rb
+
