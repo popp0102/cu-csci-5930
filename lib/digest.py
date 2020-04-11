@@ -3,10 +3,10 @@ class Digest(object):
         self.name  = name
         self.facts = []
 
-    def add_fact(self, episode, moves, reward):
+    def add_fact(self, episode, moves, score):
         self.facts.append({
             "episode": episode,
-            "reward":  reward,
-            "moves":   moves
+            "score": score,
+            "moves": moves
         })
 

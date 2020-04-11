@@ -10,7 +10,7 @@ class Analyzer(object):
         self.name     = name
         self.season   = season
         self.cwd      = "{}/{}/{}".format(Analyzer.RUNS_DIR, name, season)
-        self.rewards  = []
+        self.scores   = []
         self.episodes = []
         self.moves    = []
         os.makedirs(self.cwd, exist_ok=False)
@@ -20,7 +20,7 @@ class Analyzer(object):
         self.unpack_digest(digest)
 
         self.plot_moves_vs_episodes()
-        self.plot_rewards_vs_episodes()
+        self.plot_scores_vs_episodes()
 
     def save_digest(self, digest):
         digest = {
@@ -34,12 +34,12 @@ class Analyzer(object):
 
     def unpack_digest(self, digest):
         for fact in digest.facts:
-            self.rewards.append(fact["reward"])
+            self.scores.append(fact["score"])
             self.episodes.append(fact["episode"])
             self.moves.append(fact["moves"])
 
-    def plot_rewards_vs_episodes(self):
-        self.plot_y_vs_x('rewards', self.rewards, 'episodes', self.episodes)
+    def plot_scores_vs_episodes(self):
+        self.plot_y_vs_x('scores', self.scores, 'episodes', self.episodes)
 
     def plot_moves_vs_episodes(self):
         self.plot_y_vs_x('moves', self.moves, 'episodes', self.episodes)
@@ -50,10 +50,10 @@ class Analyzer(object):
 
         plt.figure()
         plt.title(title)
-        plt.ylim(bottom=0)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.plot(x_data, y_data, 'bo')
+        plt.ylim(bottom=0)
         plt.draw()
         plt.savefig(filename)
 

@@ -8,8 +8,8 @@ class GameMaster(object):
     def run_season(self, name, num_episodes, render=False):
         digest = Digest(name)
         for i in range(num_episodes):
-            moves, reward = self.run_episode(render)
-            digest.add_fact(i, moves, reward)
+            moves, score = self.run_episode(render)
+            digest.add_fact(i, moves, score)
 
         self.env.close()
         return digest

@@ -6,7 +6,7 @@ from lib.analyzer     import Analyzer
 ATARI_GAME   = 'SpaceInvaders-v0'
 AGENT        = 'random_agent'
 SEASON       = "season_1"
-NUM_EPISODES = 5
+NUM_EPISODES = 50
 
 def main():
     analyzer    = Analyzer(AGENT, SEASON)
