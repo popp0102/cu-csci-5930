@@ -1,6 +1,6 @@
-import pdb
 import os
 import matplotlib.pyplot as plt
+import json
 
 class Analyzer(object):
     RUNS_DIR = 'runs'
@@ -8,17 +8,22 @@ class Analyzer(object):
 
     def __init__(self, name):
         self.name     = name
-        self.cwd      = Analyzer.RUNS_DIR+'/'+name
+        self.cwd      = Analyzer.RUNS_DIR + '/' + name
         self.rewards  = []
         self.episodes = []
         self.moves    = []
         os.makedirs(self.cwd, exist_ok=False)
 
     def run(self, digest):
+        self.save_digest(digest)
         self.unpack_digest(digest)
 
         self.moves_vs_episodes()
         self.rewards_vs_episodes()
+
+    def save_digest(self, digest):
+        with open(self.cwd + '/' + 'digest.json', 'w') as fp:
+            json.dump(digest.facts, fp)
 
     def unpack_digest(self, digest):
         for fact in digest.facts:
@@ -28,11 +33,11 @@ class Analyzer(object):
 
     def rewards_vs_episodes(self):
         self.plot_y_vs_x('rewards', self.rewards, 'episodes', self.episodes)
-        plt.savefig(self.cwd + '/rewards_vs_episodes')
+        plt.savefig(self.cwd + '/' + 'rewards_vs_episodes')
 
     def moves_vs_episodes(self):
         self.plot_y_vs_x('moves', self.moves, 'episodes', self.episodes)
-        plt.savefig(self.cwd + '/moves_vs_episodes')
+        plt.savefig(self.cwd + '/' + 'moves_vs_episodes')
 
     def plot_y_vs_x(self, y_label, y_data, x_label, x_data):
         plt.title(y_label + " vs " + x_label)

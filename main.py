@@ -1,4 +1,3 @@
-import pdb
 import gym
 from lib.random_agent import RandomAgent
 from lib.game_master  import GameMaster
