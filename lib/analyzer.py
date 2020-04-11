@@ -10,7 +10,7 @@ class Analyzer(object):
     def __init__(self, name, season):
         self.name     = name
         self.season   = season
-        self.cwd      = Analyzer.RUNS_DIR + '/' + name + '/' + season
+        self.cwd      = "{}/{}/{}".format(Analyzer.RUNS_DIR, name, season)
         self.rewards  = []
         self.episodes = []
         self.moves    = []
@@ -20,8 +20,8 @@ class Analyzer(object):
         self.save_digest(digest)
         self.unpack_digest(digest)
 
-        self.moves_vs_episodes()
-        self.rewards_vs_episodes()
+        self.plot_moves_vs_episodes()
+        self.plot_rewards_vs_episodes()
 
     def save_digest(self, digest):
         digest = {
@@ -29,7 +29,8 @@ class Analyzer(object):
             "season": self.season,
             "facts": digest.facts,
         }
-        with open(self.cwd + '/' + 'digest.json', 'w') as fp:
+        filename = "{}/{}".format(self.cwd, 'digest.json')
+        with open(filename, 'w') as fp:
             json.dump(digest, fp, indent=1)
 
     def unpack_digest(self, digest):
@@ -38,23 +39,22 @@ class Analyzer(object):
             self.episodes.append(fact["episode"])
             self.moves.append(fact["moves"])
 
-    def rewards_vs_episodes(self):
-        plt.figure()
+    def plot_rewards_vs_episodes(self):
         self.plot_y_vs_x('rewards', self.rewards, 'episodes', self.episodes)
-        plt.draw()
-        plt.savefig(self.cwd + '/' + 'rewards_vs_episodes')
 
-    def moves_vs_episodes(self):
-        plt.figure()
+    def plot_moves_vs_episodes(self):
         self.plot_y_vs_x('moves', self.moves, 'episodes', self.episodes)
-        plt.draw()
-        plt.savefig(self.cwd + '/' + 'moves_vs_episodes')
 
     def plot_y_vs_x(self, y_label, y_data, x_label, x_data):
-        title = "{} vs {} ({} / {})".format(y_label, x_label, self.name, self.season)
+        title    = "{} vs {} ({} / {})".format(y_label, x_label, self.name, self.season)
+        filename = "{}/{}_vs_{}".format(self.cwd, y_label, x_label)
+
+        plt.figure()
         plt.title(title)
-        plt.plot(x_data, y_data, 'bo')
         plt.ylim(bottom=0)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
+        plt.plot(x_data, y_data, 'bo')
+        plt.draw()
+        plt.savefig(filename)
 
