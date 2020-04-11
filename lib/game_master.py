@@ -1,3 +1,4 @@
+from time import sleep
 from .digest import Digest
 
 class GameMaster(object):
@@ -23,6 +24,8 @@ class GameMaster(object):
             moves += 1
             if render:
                 self.env.render()
+                if moves % 10 == 0:
+                    sleep(0.1)
 
             action = self.agent.select_action()
 

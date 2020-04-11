@@ -6,14 +6,15 @@ from lib.analyzer     import Analyzer
 ATARI_GAME   = 'SpaceInvaders-v0'
 AGENT        = 'random_agent'
 SEASON       = "season_1"
-NUM_EPISODES = 50
+NUM_EPISODES = 1
+WATCH_GAME   = True
 
 def main():
     analyzer    = Analyzer(AGENT, SEASON)
     env         = gym.make(ATARI_GAME)
     agent       = RandomAgent(env.action_space.n)
     game_master = GameMaster(env, agent)
-    digest      = game_master.run_season(SEASON, NUM_EPISODES, render=False)
+    digest      = game_master.run_season(SEASON, NUM_EPISODES, render=WATCH_GAME)
     analyzer.run(digest)
 
 main()
