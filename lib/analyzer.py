@@ -6,7 +6,7 @@ class Analyzer(object):
     RUNS_DIR = 'runs'
     os.makedirs(RUNS_DIR, exist_ok=True)
 
-    def __init__(self, name, season):
+    def __init__(self, game, name, season):
         self.name     = name
         self.season   = season
         self.cwd      = "{}/{}/{}".format(Analyzer.RUNS_DIR, name, season)
