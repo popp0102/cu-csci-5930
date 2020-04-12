@@ -1,6 +1,5 @@
 import sys
 import argparse
-import pdb
 
 def cmd_parse(argv):
     parser    = argparse.ArgumentParser()

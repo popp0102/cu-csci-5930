@@ -18,8 +18,13 @@ class FileManager(object):
             json.dump(data, fp, indent=1) 
 
     def load(self, filename):
-        path = self.get_fullpath(filename)
-        with open(path) as fp:
+        full_filename = self.get_fullpath(filename)
+        path          = Path(full_filename)
+
+        if not path.exists():
+            return None
+
+        with open(full_filename) as fp:
             data = json.load(fp)
 
         return data

@@ -1,13 +1,12 @@
 #!./venv/bin/python
 
 import sys
-import pdb
 import gym
-from lib.file_manager           import FileManager
-from lib.cart_pole_random_agent import CartPoleRandomAgent
-from lib.game_master            import GameMaster
-from lib.analyzer               import Analyzer
-from lib.command_line_parser    import cmd_parse
+from lib.file_manager        import FileManager
+from lib.cart_pole_agent     import CartPoleAgent
+from lib.game_master         import GameMaster
+from lib.analyzer            import Analyzer
+from lib.command_line_parser import cmd_parse
 
 #ATARI_GAME = 'SpaceInvaders-v0'
 ATARI_GAME = 'CartPole-v0'
@@ -17,7 +16,7 @@ def main(argv):
 
     file_manager = FileManager(ATARI_GAME, season)
     env          = gym.make(ATARI_GAME)
-    agent        = CartPoleRandomAgent(env.action_space.n)
+    agent        = CartPoleAgent(env.action_space.n)
     game_master  = GameMaster(env, agent)
     analyzer     = Analyzer(file_manager.cwd)
 
@@ -26,7 +25,7 @@ def main(argv):
         file_manager.save(agent.save(), 'training.json')
     elif command == 'analyze':
         agent.load(file_manager.load('training.json'))
-        digest = game_master.run_season(season, episodes, render=False)
+        digest = game_master.run_season(episodes)
         file_manager.save(digest.facts, 'digest.json')
         analyzer.create_graphs(digest)
     elif command == 'watch':

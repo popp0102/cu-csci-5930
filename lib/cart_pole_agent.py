@@ -2,7 +2,7 @@ import random
 import numpy as np
 from .agent import Agent
 
-class CartPoleRandomAgent(Agent):
+class CartPoleAgent(Agent):
     def __init__(self, max_action):
         super().__init__(max_action)
         self.best_weights = np.random.rand(4) * 2 - 1
@@ -15,7 +15,8 @@ class CartPoleRandomAgent(Agent):
         return { "best_weights": self.best_weights.tolist() }
 
     def load(self, training):
-        self.best_weights = training["best_weights"]
+        if training != None:
+            self.best_weights = training["best_weights"]
 
     def train(self, env, episodes):
         best_reward = 0

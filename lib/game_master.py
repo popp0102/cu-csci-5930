@@ -6,7 +6,7 @@ class GameMaster(object):
         self.env   = env
         self.agent = agent
 
-    def run_season(self, num_episodes, render):
+    def run_season(self, num_episodes):
         digest = Digest()
         for i in range(num_episodes):
             moves, score = self.run_episode(render=False)
