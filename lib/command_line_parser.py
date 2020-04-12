@@ -1,4 +1,6 @@
+import sys
 import argparse
+import pdb
 
 def cmd_parse(argv):
     parser    = argparse.ArgumentParser()
@@ -16,11 +18,13 @@ def cmd_parse(argv):
 
     args    = parser.parse_args()
     command = args.command
-    season  = args.season
     if command == 'train' or command == 'analyze':
         episodes = args.episodes
     elif command == 'watch':
         episodes = None
+    else:
+        parser.print_help()
+        sys.exit(0)
 
-    return (command, episodes, season)
+    return (command, episodes, args.season)
 
