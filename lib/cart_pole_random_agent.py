@@ -2,29 +2,32 @@ import random
 import numpy as np
 from .agent import Agent
 
-class RandomAgent(Agent):
-    def type(self):
-        return "random_agent"
+class CartPoleRandomAgent(Agent):
+    def __init__(self, max_action):
+        super().__init__(max_action)
+        self.best_weights = np.random.rand(4) * 2 - 1
 
     def select_action(self, observation):
-        action = 0 if np.matmul(weights, observation) < 0 else 1
+        action = 0 if np.matmul(self.best_weights, observation) < 0 else 1
         return action
+
+    def save(self):
+        return { "best_weights": self.best_weights.tolist() }
+
+    def load(self, training):
+        self.best_weights = training["best_weights"]
 
     def train(self, env, episodes):
         best_reward = 0
-        weights     = []
         for episode in range(episodes):
             weights = np.random.rand(4) * 2 - 1
             reward  = self.run_training_episode(weights, env)
 
             if reward > best_reward:
-                bestreward  = reward
-                bestweights = weights
+                best_reward       = reward
+                self.best_weights = weights
                 if reward == 200:
                     break
-
-        self.best_weights = weights
-        return weights
 
     def run_training_episode(self, weights, env):
         done         = False
@@ -41,5 +44,5 @@ class RandomAgent(Agent):
             if done:
                 break
 
-            return total_reward
+        return total_reward
 

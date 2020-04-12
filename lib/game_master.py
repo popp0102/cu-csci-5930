@@ -6,8 +6,8 @@ class GameMaster(object):
         self.env   = env
         self.agent = agent
 
-    def run_season(self, name, num_episodes, render):
-        digest = Digest(name)
+    def run_season(self, num_episodes, render):
+        digest = Digest()
         for i in range(num_episodes):
             moves, score = self.run_episode(render=False)
             digest.add_fact(i, moves, score)
@@ -23,8 +23,6 @@ class GameMaster(object):
             moves += 1
             if render:
                 self.env.render()
-                if moves % 60 == 0:
-                    sleep(1.0)
 
             action = self.agent.select_action(observation)
 
@@ -33,6 +31,9 @@ class GameMaster(object):
 
             if done:
                 break
+
+        if render:
+            print("Moves: {}, Reward: {}".format(moves, total_reward))
 
         return (moves, total_reward)
 
