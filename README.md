@@ -1,5 +1,5 @@
 # 5930-final-project
-Reinforcement learning with Space Invaders and Open AI Gym
+Reinforcement learning with Space Invaders and other games in Open AI Gym
 
 # Author
 Jason Poppler
