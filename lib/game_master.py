@@ -23,6 +23,8 @@ class GameMaster(object):
             moves += 1
             if render:
                 self.env.render()
+                if moves % 30 == 0:
+                    sleep(0.2)
 
             action = self.agent.select_action(observation)
 

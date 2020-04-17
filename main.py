@@ -2,21 +2,21 @@
 
 import sys
 import gym
-from lib.file_manager        import FileManager
-from lib.cart_pole_agent     import CartPoleAgent
-from lib.game_master         import GameMaster
-from lib.analyzer            import Analyzer
-from lib.command_line_parser import cmd_parse
+from lib.file_manager         import FileManager
+from lib.cart_pole_agent      import CartPoleAgent
+from lib.space_invaders_agent import SpaceInvadersAgent
+from lib.game_master          import GameMaster
+from lib.analyzer             import Analyzer
+from lib.command_line_parser  import cmd_parse
 
-#ATARI_GAME = 'SpaceInvaders-v0'
-ATARI_GAME = 'CartPole-v0'
+ATARI_GAME = 'SpaceInvaders-v0'
 
 def main(argv):
     (command, episodes, season) = cmd_parse(argv)
 
     file_manager = FileManager(ATARI_GAME, season)
     env          = gym.make(ATARI_GAME)
-    agent        = CartPoleAgent(env.action_space.n)
+    agent        = SpaceInvadersAgent(env.action_space.n)
     game_master  = GameMaster(env, agent)
     analyzer     = Analyzer(file_manager.cwd)
 
