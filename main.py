@@ -2,12 +2,11 @@
 
 import sys
 import gym
-from lib.file_manager         import FileManager
-from lib.cart_pole_agent      import CartPoleAgent
-from lib.space_invaders_agent import SpaceInvadersAgent
-from lib.game_master          import GameMaster
-from lib.analyzer             import Analyzer
-from lib.command_line_parser  import cmd_parse
+from lib.agent.space_invaders_agent import SpaceInvadersAgent
+from lib.file_manager               import FileManager
+from lib.game_master                import GameMaster
+from lib.analyzer                   import Analyzer
+from lib.command_line_parser        import cmd_parse
 
 ATARI_GAME = 'SpaceInvaders-v0'
 
