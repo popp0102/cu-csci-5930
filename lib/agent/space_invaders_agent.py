@@ -15,11 +15,18 @@ class SpaceInvadersAgent(Agent):
     def select_action(self, observation):
         action = None
         if random.uniform(0,1) < self.epsilon:
-            action = random.choice(self.valid_actions)
+            action = self.take_random_action()
         else:
             # get action from neural network
-            action = None
+            action = self.take_random_action()
         return action
 
-    def train(self, env, episodes):
+    def remember(self, old_observation, new_observation, reward, done, action):
+        self.memory.memorize(old_observation, new_observation, reward, done, action)
+
+    def memory_is_full(self):
+        return self.memory.is_full()
+
+    def train(self):
         return
+

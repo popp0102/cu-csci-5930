@@ -3,39 +3,56 @@ from .digest import Digest
 
 class GameMaster(object):
     def __init__(self, env, agent):
-        self.env   = env
-        self.agent = agent
+        self.env    = env
+        self.agent  = agent
+        self.frames = 0
 
-    def run_season(self, num_episodes):
+    def run_season(self, num_episodes, training, render):
+        self.fill_agent_memory()
+
         digest = Digest()
         for i in range(num_episodes):
-            moves, score = self.run_episode(render=False)
+            moves, score = self.run_episode(training, render)
             digest.add_fact(i, moves, score)
 
         return digest
 
-    def run_episode(self, render):
-        done         = False
-        observation  = self.env.reset()
-        total_reward = 0
-        moves        = 0
+    def run_episode(self, training, render):
+        current_observation = self.env.reset()
+        self.frames         = 0
+        done                = False
+        score               = 0
+        moves               = 0
         while not done:
-            moves += 1
+            action                               = self.agent.select_action(current_observation)
+            next_observation, reward, done, info = self.env.step(action)
+            self.agent.remember(current_observation, next_observation, reward, done, action)
+            current_observation                  = next_observation
+
+            score       += reward
+            moves       += 1
+            self.frames += 1
+
+            if training:
+                self.agent.train()
+
             if render:
-                self.env.render()
-                if moves % 30 == 0:
-                    sleep(0.2)
+                self.render_game()
 
-            action = self.agent.select_action(observation)
+        print("Moves: {}, Score: {}".format(moves, score))
 
-            observation, reward, done, _ = self.env.step(action)
-            total_reward += reward
+        return (moves, score)
 
-            if done:
-                break
+    def fill_agent_memory(self):
+        current_observation = self.env.reset()
+        while (not self.agent.memory_is_full()):
+            action                               = self.agent.take_random_action()
+            next_observation, reward, done, info = self.env.step(action)
+            self.agent.remember(current_observation, next_observation, reward, done, action)
+            current_observation                  = next_observation
 
-        if render:
-            print("Moves: {}, Reward: {}".format(moves, total_reward))
-
-        return (moves, total_reward)
+    def render_game(self):
+        self.env.render()
+        if self.frames % 30 == 0:
+            sleep(0.2)
 
