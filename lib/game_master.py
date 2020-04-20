@@ -12,12 +12,12 @@ class GameMaster(object):
 
         digest = Digest()
         for i in range(num_episodes):
-            moves, score = self.run_episode(training, render)
+            moves, score = self.run_episode(i, training, render)
             digest.add_fact(i, moves, score)
 
         return digest
 
-    def run_episode(self, training, render):
+    def run_episode(self, episode, training, render):
         current_observation = self.env.reset()
         self.frames         = 0
         done                = False
@@ -39,7 +39,7 @@ class GameMaster(object):
             if render:
                 self.render_game()
 
-        print("Moves: {}, Score: {}, Epsilon: {}".format(moves, score, self.agent.epsilon))
+        print("Episode: {}   Moves: {}   Score: {}   Epsilon: {}".format(episode, moves, score, self.agent.epsilon))
 
         return (moves, score)
 
