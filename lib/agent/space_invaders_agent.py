@@ -22,7 +22,7 @@ class SpaceInvadersAgent(Agent):
         if random.uniform(0,1) < self.epsilon:
             action = self.take_random_action()
         else:
-            action_q_values = self.policy_network.model.predict(observation.reshape(1,210,160,3))
+            action_q_values = self.policy_network.model.predict(observation.reshape(1,84,84,1))
             action          = np.argmax(action_q_values)
 
         return action
