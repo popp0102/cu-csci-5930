@@ -16,13 +16,14 @@ GAMMA           = 0.95
 FC_NUM_NEURONS  = 256
 MEMORY_CAPACITY = 50000
 RECALL_SIZE     = 32
+UPDATE_WEIGHTS  = 1000
 
 def main(argv):
     (command, episodes, season) = cmd_parse(argv)
 
     file_manager = FileManager(ATARI_GAME, season)
     env          = gym.make(ATARI_GAME)
-    agent        = SpaceInvadersAgent(env.action_space.n, ALPHA, EPSILON, GAMMA, FC_NUM_NEURONS, MEMORY_CAPACITY, RECALL_SIZE)
+    agent        = SpaceInvadersAgent(env.action_space.n, ALPHA, EPSILON, GAMMA, FC_NUM_NEURONS, MEMORY_CAPACITY, RECALL_SIZE, UPDATE_WEIGHTS)
     game_master  = GameMaster(env, agent)
     #analyzer     = Analyzer(file_manager.cwd)
 

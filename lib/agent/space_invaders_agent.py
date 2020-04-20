@@ -6,13 +6,15 @@ from .memory import Memory
 from .deep_q_neural_network import DeepQNeuralNetwork
 
 class SpaceInvadersAgent(Agent):
-    def __init__(self, num_actions, alpha, epsilon, gamma, fc_num_neurons, memory_capacity, batch_size):
+    def __init__(self, num_actions, alpha, epsilon, gamma, fc_num_neurons, memory_capacity, batch_size, update_weights_threshold):
         super().__init__(num_actions)
 
-        self.epsilon = epsilon
-        self.gamma   = gamma
-        self.memory  = Memory(memory_capacity, batch_size)
-        self.batch_size = batch_size
+        self.epsilon                  = epsilon
+        self.gamma                    = gamma
+        self.memory                   = Memory(memory_capacity, batch_size)
+        self.batch_size               = batch_size
+        self.learn_step               = 0
+        self.update_weights_threshold = update_weights_threshold
 
         self.policy_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
         self.target_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
@@ -34,6 +36,13 @@ class SpaceInvadersAgent(Agent):
         return self.memory.is_full()
 
     def train(self):
+        self.learn_step += 1
+
+        if self.learn_step >= self.update_weights_threshold:
+            self.learn_step = 0
+            policy_weights  = self.policy_network.model.get_weights()
+            self.target_network.model.set_weights(policy_weights)
+
         experiences = self.memory.recall()
 
         states      = experiences["states"]
