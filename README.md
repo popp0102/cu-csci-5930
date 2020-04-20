@@ -9,6 +9,9 @@ Jason Poppler
 2. source venv/bin/activate
 3. pip install -r requirements.txt
 
+## Install CUDA
+Go here to install CUDA: https://developer.nvidia.com/cuda-zone
+
 # Running the Project
 main.py is the primary executable for the project. It has 3 optins you can pass it:
 

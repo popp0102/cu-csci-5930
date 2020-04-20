@@ -24,9 +24,9 @@ class GameMaster(object):
         score               = 0
         moves               = 0
         while not done:
-            action                               = self.agent.select_action(current_observation)
+            action                               = self.agent.select_action(current_observation, self.env)
             next_observation, reward, done, info = self.env.step(action)
-            self.agent.remember(current_observation, next_observation, reward, done, action)
+            self.agent.remember(current_observation, next_observation, reward, action)
             current_observation                  = next_observation
 
             score       += reward
@@ -39,7 +39,7 @@ class GameMaster(object):
             if render:
                 self.render_game()
 
-        print("Moves: {}, Score: {}".format(moves, score))
+        print("Moves: {}, Score: {}, Epsilon: {}".format(moves, score, self.agent.epsilon))
 
         return (moves, score)
 
@@ -48,7 +48,7 @@ class GameMaster(object):
         while (not self.agent.memory_is_full()):
             action                               = self.agent.take_random_action()
             next_observation, reward, done, info = self.env.step(action)
-            self.agent.remember(current_observation, next_observation, reward, done, action)
+            self.agent.remember(current_observation, next_observation, reward, action)
             current_observation                  = next_observation
 
     def render_game(self):
