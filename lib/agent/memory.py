@@ -13,9 +13,9 @@ class Memory(object):
     def is_full(self):
         return self.memory[-1] != None
 
-    def memorize(self, old_observation, new_observation, reward, action):
-        information                    = (old_observation, new_observation, reward, action)
-        self.memory[self.memory_index] = information
+    def memorize(self, state, new_state, reward, action):
+        experience                     = (state, new_state, reward, action)
+        self.memory[self.memory_index] = experience
         self.memory_index              = (self.memory_index + 1) % self.memory_capacity
 
     def recall(self):

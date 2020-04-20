@@ -5,6 +5,8 @@ from .agent import Agent
 from .memory import Memory
 from .deep_q_neural_network import DeepQNeuralNetwork
 
+NUM_FRAMES = 4
+
 class SpaceInvadersAgent(Agent):
     def __init__(self, num_actions, alpha, epsilon, gamma, fc_num_neurons, memory_capacity, batch_size, update_weights_threshold):
         super().__init__(num_actions)
@@ -19,23 +21,31 @@ class SpaceInvadersAgent(Agent):
         self.policy_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
         self.target_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
 
-    def select_action(self, observation, env):
+    def select_action(self, state, env):
         action = None
         if random.uniform(0,1) < self.epsilon:
             action = self.take_random_action()
         else:
-            action_q_values = self.policy_network.model.predict(observation.reshape(1,84,84,1))
+            action_q_values = self.policy_network.model.predict(state.reshape(1,84,84,NUM_FRAMES))
             action          = np.argmax(action_q_values)
 
         return action
 
-    def remember(self, old_observation, new_observation, reward, action):
-        self.memory.memorize(old_observation, new_observation, reward, action) # this is an experience
+    def remember(self, state, new_state, reward, action):
+        self.memory.memorize(state, new_state, reward, action) # this is an experience
 
     def memory_is_full(self):
         return self.memory.is_full()
 
-    def train(self):
+    def load_networks(self, policy_path, target_path):
+        self.policy_network.load(policy_path)
+        self.target_network.load(target_path)
+
+    def save_networks(self, policy_path, target_path):
+        self.policy_network.save(policy_path)
+        self.target_network.save(target_path)
+
+    def train(self, episode):
         self.learn_step += 1
 
         if self.learn_step >= self.update_weights_threshold:
@@ -50,16 +60,21 @@ class SpaceInvadersAgent(Agent):
         rewards     = experiences["rewards"]
         actions     = experiences["actions"]
 
-        q_current_values = self.policy_network.model.predict(states)
-        q_next_values    = self.target_network.model.predict(next_states)
-        q_target         = np.copy(q_current_values)
+        targets = np.zeros((self.batch_size, 6))
+        for i in range(self.batch_size):
+            targets[i]             = self.policy_network.model.predict(states[i].reshape(1,84,84,NUM_FRAMES))
+            q_next_values          = self.target_network.model.predict(next_states[i].reshape(1,84,84,NUM_FRAMES))
+            targets[i, actions[i]] = rewards[i] + self.gamma*np.max(q_next_values, axis=1) # Bellman Equation
 
-        first_dim_indices = np.arange(self.batch_size)
-        q_target[first_dim_indices, actions] = rewards + self.gamma*np.max(q_next_values, axis=1) # Bellman Equation
+        loss = self.policy_network.model.train_on_batch(states, targets) # update weights
 
-        self.policy_network.model.train_on_batch(states, q_target) # update weights
+        if self.learn_step % 50 == 0:
+            print("EPISODE: ", episode, " LOSS: ", loss)
 
-        self.epsilon = self.epsilon - 0.00001
+        if episode > 50:
+            self.epsilon = 0.05
+
+        self.epsilon = self.epsilon - 0.0001
         if self.epsilon < 0.05:
             self.epsilon = 0.05
 
