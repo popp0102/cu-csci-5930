@@ -8,23 +8,24 @@ class FileManager(object):
         os.makedirs(self.cwd, exist_ok=True)
 
     def save(self, data, filename):
-        full_filename = self.get_fullpath(filename)
-        path          = Path(filename)
+        filename_path = self.get_fullpath(filename)
+        path          = Path(filename_path)
 
         if path.exists():
-            raise ValueError("{} already exists".format(full_filename))
+            print("!!! Warning - not saving file ", filename_path, " because it already exists !!!")
+            return
 
-        with open(full_filename, 'w') as fp:
+        with open(filename_path, 'w') as fp:
             json.dump(data, fp, indent=1) 
 
     def load(self, filename):
-        full_filename = self.get_fullpath(filename)
-        path          = Path(full_filename)
+        filename_path = self.get_fullpath(filename)
+        path          = Path(filename_path)
 
         if not path.exists():
             return None
 
-        with open(full_filename) as fp:
+        with open(filename_path) as fp:
             data = json.load(fp)
 
         return data

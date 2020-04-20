@@ -14,10 +14,10 @@ class GameMaster(object):
         self.agent  = agent
         self.frames = 0
 
-    def run_season(self, num_episodes, training, render):
+    def run_season(self, season, num_episodes, training, render):
         self.fill_agent_memory()
 
-        self.agent.load_networks('policy.h', 'target.h')
+        self.agent.load_networks()
 
         digest     = Digest()
         best_score = -1
@@ -26,7 +26,7 @@ class GameMaster(object):
 
             if score > best_score:
                 best_score = score
-                self.agent.save_networks('policy.h', 'target.h')
+                self.agent.save_networks()
 
             digest.add_fact(i, moves, score)
 

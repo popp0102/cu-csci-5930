@@ -1,5 +1,6 @@
 import pdb
 import random
+from pathlib import Path
 import numpy as np
 from .agent import Agent
 from .memory import Memory
@@ -8,16 +9,21 @@ from .deep_q_neural_network import DeepQNeuralNetwork
 NUM_FRAMES = 4
 
 class SpaceInvadersAgent(Agent):
-    def __init__(self, num_actions, alpha, epsilon, gamma, fc_num_neurons, memory_capacity, batch_size, update_weights_threshold):
+    def __init__(self, cwd, num_actions, alpha, epsilon, epsilon_min, epsilon_drop, gamma, fc_num_neurons, memory_capacity, batch_size, update_weights_threshold):
         super().__init__(num_actions)
 
-        self.epsilon                  = epsilon
-        self.gamma                    = gamma
-        self.memory                   = Memory(memory_capacity, batch_size)
+        self.epsilon      = epsilon
+        self.epsilon_min  = epsilon_min
+        self.epsilon_drop = epsilon_drop
+        self.gamma        = gamma
+        self.memory       = Memory(memory_capacity, batch_size)
+
         self.batch_size               = batch_size
         self.learn_step               = 0
         self.update_weights_threshold = update_weights_threshold
 
+        self.policy_path    = "{}/policy.h".format(cwd)
+        self.target_path    = "{}/target.h".format(cwd)
         self.policy_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
         self.target_network = DeepQNeuralNetwork(num_actions, alpha, fc_num_neurons)
 
@@ -37,13 +43,20 @@ class SpaceInvadersAgent(Agent):
     def memory_is_full(self):
         return self.memory.is_full()
 
-    def load_networks(self, policy_path, target_path):
-        self.policy_network.load(policy_path)
-        self.target_network.load(target_path)
+    def load_networks(self):
+        path_policy = Path(self.policy_path)
+        path_target = Path(self.target_path)
 
-    def save_networks(self, policy_path, target_path):
-        self.policy_network.save(policy_path)
-        self.target_network.save(target_path)
+        if path_policy.exists() and path_target.exists():
+            print("!!! Loading existing models !!!")
+            self.policy_network.load(self.policy_path)
+            self.target_network.load(self.target_path)
+        else:
+            print("!!! Warning - not loading models as they don't exist !!!")
+
+    def save_networks(self):
+        self.policy_network.save(self.policy_path)
+        self.target_network.save(self.target_path)
 
     def train(self, episode):
         self.learn_step += 1
@@ -71,10 +84,7 @@ class SpaceInvadersAgent(Agent):
         if self.learn_step % 50 == 0:
             print("EPISODE: ", episode, " LOSS: ", loss)
 
-        if episode > 50:
-            self.epsilon = 0.05
-
-        self.epsilon = self.epsilon - 0.0001
-        if self.epsilon < 0.05:
-            self.epsilon = 0.05
+        self.epsilon = self.epsilon - self.epsilon_drop
+        if self.epsilon < self.epsilon_min:
+            self.epsilon = self.epsilon_min
 
