@@ -19,14 +19,8 @@ class Memory(object):
         self.memory_index              = (self.memory_index + 1) % self.memory_capacity
 
     def recall(self):
-        start = random.randint(0, self.memory_capacity)
-        end   = start + self.recall_size
-
-        if end >= self.memory_capacity:
-            start -= self.recall_size
-            end   -= self.recall_size
-
-        memory_batch = self.memory[start:end]
+        # random samples to break any sequential correlation
+        memory_batch = random.sample(self.memory, self.recall_size)
         experiences  = self.transform(memory_batch)
 
         return experiences
