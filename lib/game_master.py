@@ -15,9 +15,10 @@ class GameMaster(object):
         self.frames = 0
 
     def run_season(self, season, num_episodes, training, render):
-        self.fill_agent_memory()
-
         self.agent.load_networks()
+
+        if training:
+            self.fill_agent_memory()
 
         digest     = Digest()
         best_score = -1
@@ -42,7 +43,8 @@ class GameMaster(object):
         while not done:
             action = self.agent.select_action(state, self.env)
             (next_state, reward, done) = self.create_experience(action)
-            self.agent.remember(state, next_state, reward, action)
+            if training:
+                self.agent.remember(state, next_state, reward, action)
             next_state = state
 
             score       += reward
@@ -85,7 +87,7 @@ class GameMaster(object):
     def render_game(self):
         self.env.render()
         if self.frames % 30 == 0:
-            sleep(0.2)
+            sleep(0.3)
 
     def process_frame(self, observation):
         down_sample     = cv2.resize(observation, (84, 110)) # down sample as per the paper

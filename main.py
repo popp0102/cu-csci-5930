@@ -36,15 +36,12 @@ def main(argv):
     if command == 'train':
         game_master.run_season(season, episodes, training=True, render=False)
         file_manager.save(HP, 'hyperparameters.json')
-
-    # elif command == 'analyze':
-    #     agent.load(file_manager.load('training.json'))
-    #     digest = game_master.run_season(episodes)
-    #     file_manager.save(digest.facts, 'digest.json')
-    #     analyzer.create_graphs(digest)
-    # elif command == 'watch':
-    #     agent.load(file_manager.load('training.json'))
-    #     game_master.run_episode(render=True)
+    elif command == 'analyze':
+        digest = game_master.run_season(season, episodes, training=False, render=False)
+        file_manager.save(digest.facts, 'digest.json')
+        analyzer.create_graphs(digest)
+    elif command == 'watch':
+        digest = game_master.run_season(season, 1, training=False, render=True)
 
     env.close()
 
