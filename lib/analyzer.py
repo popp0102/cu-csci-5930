@@ -37,7 +37,7 @@ class Analyzer(object):
 
     def plot_y_vs_x(self, y_label, y_data, x_label, x_data):
         title    = "{} vs {}".format(y_label, x_label)
-        filename = "{}/{}_vs_{}_{}".format(self.cwd, y_label, x_label, self.command)
+        filename = "{}/{}-vs-{}-{}".format(self.cwd, y_label, x_label, self.command)
 
         plt.figure()
         plt.title(title)

@@ -37,12 +37,12 @@ def main(argv):
 
     if command == 'train':
         training_digest = game_master.run_season(season, episodes, training=True)
-        file_manager.save(training_digest.facts, 'analysis.json')
+        file_manager.save(training_digest.facts, 'training-digest.json')
         file_manager.save(HP, 'hyperparameters.json')
         analyzer.create_graphs(training_digest, 'training')
     elif command == 'analyze':
         digest = game_master.run_season(season, episodes, training=False)
-        file_manager.save(digest.facts, 'analyze.json')
+        file_manager.save(digest.facts, 'analyze-digest.json')
         analyzer.create_graphs(digest, 'analyze')
     elif command == 'record':
         digest = game_master.run_season(season, 1, training=False)
