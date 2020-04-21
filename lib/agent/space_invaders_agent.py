@@ -38,8 +38,8 @@ class SpaceInvadersAgent(Agent):
 
         return action
 
-    def remember(self, state, new_state, reward, action):
-        self.memory.memorize(state, new_state, reward, action) # this is an experience
+    def remember(self, state, new_state, reward, action, done):
+        self.memory.memorize(state, new_state, reward, action, done) # this is an experience
 
     def memory_is_full(self):
         return self.memory.is_full()
@@ -73,12 +73,16 @@ class SpaceInvadersAgent(Agent):
         next_states = experiences["next_states"]
         rewards     = experiences["rewards"]
         actions     = experiences["actions"]
+        dones       = experiences["dones"]
 
-        targets = np.zeros((self.batch_size, 6))
+        targets = np.zeros((self.batch_size, self.num_actions))
         for i in range(self.batch_size):
-            targets[i]             = self.policy_network.model.predict(states[i].reshape(1,84,84,NUM_FRAMES))
+            q_values               = self.policy_network.model.predict(states[i].reshape(1,84,84,NUM_FRAMES))
             q_next_values          = self.target_network.model.predict(next_states[i].reshape(1,84,84,NUM_FRAMES))
-            targets[i, actions[i]] = rewards[i] + self.gamma*np.max(q_next_values, axis=1) # Bellman Equation
+            if self.learn_step % 50 == 0 and i == 0:
+                print("state: ", q_values.tolist(), "next: ", q_next_values.tolist())
+            targets[i]             = q_values[:]
+            targets[i, actions[i]] = rewards[i] + self.gamma*np.max(q_next_values, axis=1)*(1-dones[i]) # Bellman Equation
 
         self.loss = self.policy_network.model.train_on_batch(states, targets) # update weights
 

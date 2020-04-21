@@ -35,16 +35,16 @@ class GameMaster(object):
 
     def run_episode(self, episode, training):
         self.env.reset()
-        state, _, _ = self.create_experience(0)
-        self.frames = 0
-        done        = False
-        score       = 0
-        moves       = 0
+        state, _, _, _ = self.create_experience(0)
+        self.frames    = 0
+        done           = False
+        score          = 0
+        moves          = 0
         while not done:
             action = self.agent.select_action(state, self.env)
-            (next_state, reward, done) = self.create_experience(action)
+            (next_state, reward, done, penalty) = self.create_experience(action)
             if training:
-                self.agent.remember(state, next_state, reward, action)
+                self.agent.remember(state, next_state, reward - penalty, action, done)
             next_state = state
 
             score       += reward
@@ -54,32 +54,37 @@ class GameMaster(object):
             if training:
                 self.agent.train(episode)
 
-        print("Episode: {}   Moves: {}   Score: {}   Epsilon: {}   Loss: {}".format(episode, moves, score, self.agent.epsilon, self.agent.loss))
+        print("\n\nEpisode: {}   Moves: {}   Score: {}   Epsilon: {}   Loss: {}".format(episode, moves, score, self.agent.epsilon, self.agent.loss))
 
         return (moves, score)
 
     def fill_agent_memory(self):
-        self.env.reset()
-        state, _, _ = self.create_experience(0)
         while (not self.agent.memory_is_full()):
-            action = self.agent.take_random_action()
-            (next_state, reward, done) = self.create_experience(action)
-            self.agent.remember(state, next_state, reward, action)
-            next_state = state
+            self.env.reset()
+            state, _, _, _ = self.create_experience(0)
+            done = False
+            while not done:
+                action = self.agent.take_random_action()
+                (next_state, reward, done, penalty) = self.create_experience(action)
+                self.agent.remember(state, next_state, reward - penalty, action, done)
+                next_state = state
 
     def create_experience(self, action):
-        state  = []
-        reward = 0
-        done   = False
+        state   = []
+        reward  = 0
+        done    = False
+        penalty = 0
         for i in range(NUM_FRAMES):
-            step_state, step_reward, step_done, _ = self.env.step(action)
+            step_state, step_reward, step_done, info = self.env.step(action)
+            if done and info['ale.lives'] == 0:
+                penalty = 100
             processed_state = self.process_frame(step_state)
             state.append(processed_state)
             reward += step_reward
             done   |= step_done
         state = np.array(state)
         state = state.reshape(84,84,NUM_FRAMES)
-        return (state, reward, done)
+        return (state, reward, done, penalty)
 
     def process_frame(self, observation):
         down_sample     = cv2.resize(observation, (84, 110)) # down sample as per the paper

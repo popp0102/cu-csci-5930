@@ -2,6 +2,7 @@ import random
 
 class Agent(object):
     def __init__(self, num_actions):
+        self.num_actions   = num_actions
         self.valid_actions = [x for x in range(num_actions)]
 
     def is_valid_action(self, action):

@@ -13,8 +13,8 @@ class Memory(object):
     def is_full(self):
         return self.memory[-1] != None
 
-    def memorize(self, state, new_state, reward, action):
-        experience                     = (state, new_state, reward, action)
+    def memorize(self, state, new_state, reward, action, done):
+        experience                     = (state, new_state, reward, action, done)
         self.memory[self.memory_index] = experience
         self.memory_index              = (self.memory_index + 1) % self.memory_capacity
 
@@ -30,18 +30,21 @@ class Memory(object):
         next_states = []
         actions     = []
         rewards     = []
+        dones       = []
 
         for mem_entry in memory_batch:
             states.append(mem_entry[0])
             next_states.append(mem_entry[1])
             rewards.append(mem_entry[2])
             actions.append(mem_entry[3])
+            dones.append(mem_entry[4])
 
         experiences = {
             "states" : np.array(states),
             "next_states" : np.array(next_states),
             "actions" : np.array(actions),
             "rewards" : np.array(rewards),
+            "dones" : np.array(dones),
         }
 
         return experiences
