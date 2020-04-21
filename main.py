@@ -13,11 +13,11 @@ HP = {
     "game": "SpaceInvaders-v0",
     "alpha" : 0.001,
     "epsilon": 1.0,
-    "epsilon_min": 0.5,
+    "epsilon_min": 0.05,
     "epsilon_drop": 0.0001,
-    "gamma": 0.95,
-    "num_neurons": 256,
-    "mem_cap": 50000,
+    "gamma": 0.99,
+    "num_neurons": 512,
+    "mem_cap": 10000,
     "recall_size": 32,
     "update_weight_freq": 1000
 }
@@ -34,12 +34,14 @@ def main(argv):
     analyzer     = Analyzer(file_manager.cwd)
 
     if command == 'train':
-        game_master.run_season(season, episodes, training=True, render=False)
+        training_digest = game_master.run_season(season, episodes, training=True, render=False)
+        file_manager.save(training_digest.facts, 'analysis.json')
         file_manager.save(HP, 'hyperparameters.json')
+        analyzer.create_graphs(training_digest, 'training')
     elif command == 'analyze':
         digest = game_master.run_season(season, episodes, training=False, render=False)
-        file_manager.save(digest.facts, 'digest.json')
-        analyzer.create_graphs(digest)
+        file_manager.save(digest.facts, 'analyze.json')
+        analyzer.create_graphs(digest, 'analyze')
     elif command == 'watch':
         digest = game_master.run_season(season, 1, training=False, render=True)
 

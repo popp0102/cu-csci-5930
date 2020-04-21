@@ -29,7 +29,7 @@ class GameMaster(object):
                 best_score = score
                 self.agent.save_networks()
 
-            digest.add_fact(i, moves, score)
+            digest.add_fact(i, moves, score, self.agent.epsilon)
 
         return digest
 
@@ -57,7 +57,7 @@ class GameMaster(object):
             if render:
                 self.render_game()
 
-        print("Episode: {}   Moves: {}   Score: {}   Epsilon: {}".format(episode, moves, score, self.agent.epsilon))
+        print("Episode: {}   Moves: {}   Score: {}   Epsilon: {}   Loss: {}".format(episode, moves, score, self.agent.epsilon, self.agent.loss))
 
         return (moves, score)
 

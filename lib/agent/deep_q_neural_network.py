@@ -7,8 +7,9 @@ NUM_FRAMES = 4
 class DeepQNeuralNetwork(object):
     def __init__(self, num_actions, alpha, fc_num_neurons):
         # Layers to the Deep Q Network
-        conv_layer_1   = Conv2D(filters=16, kernel_size=8, strides=4, activation="relu", input_shape=(84,84,NUM_FRAMES))
-        conv_layer_2   = Conv2D(filters=32, kernel_size=4, strides=2, activation="relu")
+        conv_layer_1   = Conv2D(filters=32, kernel_size=8, strides=4, activation="relu", input_shape=(84,84,NUM_FRAMES))
+        conv_layer_2   = Conv2D(filters=64, kernel_size=4, strides=2, activation="relu")
+        conv_layer_3   = Conv2D(filters=64, kernel_size=4, strides=3, activation="relu")
         hidden_layer_1 = Dense(fc_num_neurons, activation="relu")
         output_layer   = Dense(num_actions, activation="relu")
 
@@ -16,6 +17,7 @@ class DeepQNeuralNetwork(object):
         self.model = Sequential()
         self.model.add(conv_layer_1)
         self.model.add(conv_layer_2)
+        self.model.add(conv_layer_3)
         self.model.add(Flatten())
         self.model.add(hidden_layer_1)
         self.model.add(output_layer)

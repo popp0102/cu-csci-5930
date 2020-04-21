@@ -21,6 +21,7 @@ class SpaceInvadersAgent(Agent):
         self.batch_size               = batch_size
         self.learn_step               = 0
         self.update_weights_threshold = update_weights_threshold
+        self.loss                     = -1
 
         self.policy_path    = "{}/policy.h".format(cwd)
         self.target_path    = "{}/target.h".format(cwd)
@@ -79,10 +80,7 @@ class SpaceInvadersAgent(Agent):
             q_next_values          = self.target_network.model.predict(next_states[i].reshape(1,84,84,NUM_FRAMES))
             targets[i, actions[i]] = rewards[i] + self.gamma*np.max(q_next_values, axis=1) # Bellman Equation
 
-        loss = self.policy_network.model.train_on_batch(states, targets) # update weights
-
-        if self.learn_step % 50 == 0:
-            print("EPISODE: ", episode, " LOSS: ", loss)
+        self.loss = self.policy_network.model.train_on_batch(states, targets) # update weights
 
         self.epsilon = self.epsilon - self.epsilon_drop
         if self.epsilon < self.epsilon_min:
