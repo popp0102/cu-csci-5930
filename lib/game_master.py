@@ -14,7 +14,7 @@ class GameMaster(object):
         self.agent  = agent
         self.frames = 0
 
-    def run_season(self, season, num_episodes, training, render):
+    def run_season(self, season, num_episodes, training):
         self.agent.load_networks()
 
         if training:
@@ -23,7 +23,7 @@ class GameMaster(object):
         digest     = Digest()
         best_score = -1
         for i in range(num_episodes):
-            moves, score = self.run_episode(i, training, render)
+            moves, score = self.run_episode(i, training)
 
             if score > best_score:
                 best_score = score
@@ -33,7 +33,7 @@ class GameMaster(object):
 
         return digest
 
-    def run_episode(self, episode, training, render):
+    def run_episode(self, episode, training):
         self.env.reset()
         state, _, _ = self.create_experience(0)
         self.frames = 0
@@ -53,9 +53,6 @@ class GameMaster(object):
 
             if training:
                 self.agent.train(episode)
-
-            if render:
-                self.render_game()
 
         print("Episode: {}   Moves: {}   Score: {}   Epsilon: {}   Loss: {}".format(episode, moves, score, self.agent.epsilon, self.agent.loss))
 
@@ -83,11 +80,6 @@ class GameMaster(object):
         state = np.array(state)
         state = state.reshape(84,84,NUM_FRAMES)
         return (state, reward, done)
-
-    def render_game(self):
-        self.env.render()
-        if self.frames % 30 == 0:
-            sleep(0.3)
 
     def process_frame(self, observation):
         down_sample     = cv2.resize(observation, (84, 110)) # down sample as per the paper

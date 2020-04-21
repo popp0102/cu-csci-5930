@@ -7,19 +7,19 @@ def cmd_parse(argv):
 
     train_parser   = subparser.add_parser("train")
     analyze_parser = subparser.add_parser("analyze")
-    watch_parser   = subparser.add_parser("watch")
+    record_parser  = subparser.add_parser("record")
 
     train_parser.add_argument("-e", "--episodes", help="number of episodes to run during training", type=int, default=100)
     train_parser.add_argument("-s", "--season", help="season number used to store training results", type=int, default=1)
     analyze_parser.add_argument("-e", "--episodes", help="number of episodes to run", type=int, default=100)
     analyze_parser.add_argument("-s", "--season", help="season number used to store run results", type=int, default=1)
-    watch_parser.add_argument("-s", "--season", help="which season to watch", type=int, default=1)
+    record_parser.add_argument("-s", "--season", help="which season to record", type=int, default=1)
 
     args    = parser.parse_args()
     command = args.command
     if command == 'train' or command == 'analyze':
         episodes = args.episodes
-    elif command == 'watch':
+    elif command == 'record':
         episodes = None
     else:
         parser.print_help()
