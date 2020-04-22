@@ -75,9 +75,11 @@ class GameMaster(object):
         done    = False
         penalty = 0
         for i in range(NUM_FRAMES):
-            step_state, step_reward, step_done, info = self.env.step(action)
+            if not done:
+                step_state, step_reward, step_done, info = self.env.step(action)
             if done and info['ale.lives'] == 0:
                 penalty = 100
+
             processed_state = self.process_frame(step_state)
             state.append(processed_state)
             reward += step_reward

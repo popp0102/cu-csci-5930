@@ -14,12 +14,13 @@ HP = {
     #"game": "PongNoFrameskip-v4",
     "game": "SpaceInvaders-v0",
     "alpha" : 0.001,
-    "epsilon": 1.0,
-    "epsilon_min": 0.02,
+    #"epsilon": 1.0,
+    "epsilon": 0.05,
+    "epsilon_min": 0.05,
     "epsilon_drop": 1e-5,
     "gamma": 0.99,
     "num_neurons": 512,
-    "mem_cap": 5000,
+    "mem_cap": 10000,
     "recall_size": 32,
     "update_weight_freq": 1000
 }
